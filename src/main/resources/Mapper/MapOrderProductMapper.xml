@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.MapOrderProductMapper" >
+  <resultMap id="BaseResultMap" type="po.MapOrderProduct" >
+    <id column="map_order_product_id" property="mapOrderProductId" jdbcType="INTEGER" />
+    <result column="ord_id" property="ordId" jdbcType="INTEGER" />
+    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <result column="pro_classify_id" property="proClassifyId" jdbcType="INTEGER" />
+    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+    <result column="pro_price" property="proPrice" jdbcType="INTEGER" />
+    <result column="pro_count" property="proCount" jdbcType="INTEGER" />
+    <result column="isdelete" property="isdelete" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap id="orderAndProduct" type="dto.OrderAndProductDTO" >
+    <result column="map_order_product_id" property="mapOrderProductId" jdbcType="INTEGER" />
+    <result column="ord_id" property="ordId" jdbcType="INTEGER" />
+    <result column="pro_classify_id" property="proClassifyId" jdbcType="INTEGER" />
+    <result column="pro_price" property="proPrice" jdbcType="INTEGER" />
+    <result column="pro_count" property="proCount" jdbcType="INTEGER" />
+    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <result column="pro_name" property="proName" jdbcType="VARCHAR" />
+    <result column="pro_head" property="proHead" jdbcType="VARCHAR" />
+    <result column="product_price" property="productPrice" jdbcType="INTEGER" />
+    <result column="pro_sum" property="proSum" jdbcType="INTEGER" />
+    <result column="pro_rateprice" property="proRateprice" jdbcType="INTEGER" />
+    <result column="pro_online" property="proOnline" jdbcType="BIT" />
+    <result column="pro_detail" property="proDetail" jdbcType="VARCHAR" />
+    <result column="pro_area" property="proArea" jdbcType="VARCHAR" />
+    <result column="classify_id" property="classifyId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    map_order_product_id, ord_id, pro_id, pro_classify_id, pro_name, pro_price, pro_count, 
+    isdelete, create_time, last_modified_time
+  </sql>
+  
+  
+  <select id="selectOderAndProductByOrderId" resultMap="orderAndProduct" parameterType="java.lang.Integer">
+  	 select 
+		 mp.`map_order_product_id`,
+		 mp.`ord_id`,
+		 mp.`pro_classify_id`,
+		 mp.`pro_price`,
+		 mp.`pro_count`,
+		 pt.`pro_id`,
+		 pt.`pro_name`,
+		 pt.`pro_head`,
+		 pt.`product_price`,
+		 pt.`pro_sum`,
+		 pt.`pro_rateprice`,
+		 pt.`pro_online`,
+		 pt.`pro_detail`,
+		 pt.`pro_area`,
+		 pt.`classify_id`
+	from map_order_product mp ,product pt where 
+	mp.`pro_id`= pt.`pro_id` 
+	and mp.`isdelete` = 0 
+	and pt.`isdelete` = 0 
+	and mp.`ord_id`= #{orderId}
+  </select>
+  
+  
+  <!-- <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="po.MapOrderProductKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from map_order_product
+    where map_order_product_id = #{mapOrderProductId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="po.MapOrderProductKey" >
+    delete from map_order_product
+    where map_order_product_id = #{mapOrderProductId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="po.MapOrderProduct" >
+    insert into map_order_product (map_order_product_id, ord_id, pro_id, 
+      pro_classify_id, pro_name, pro_price, 
+      pro_count, isdelete, create_time, 
+      last_modified_time)
+    values (#{mapOrderProductId,jdbcType=INTEGER}, #{ordId,jdbcType=INTEGER}, #{proId,jdbcType=INTEGER}, 
+      #{proClassifyId,jdbcType=INTEGER}, #{proName,jdbcType=VARCHAR}, #{proPrice,jdbcType=INTEGER}, 
+      #{proCount,jdbcType=INTEGER}, #{isdelete,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastModifiedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="po.MapOrderProduct" >
+    insert into map_order_product
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mapOrderProductId != null" >
+        map_order_product_id,
+      </if>
+      <if test="ordId != null" >
+        ord_id,
+      </if>
+      <if test="proId != null" >
+        pro_id,
+      </if>
+      <if test="proClassifyId != null" >
+        pro_classify_id,
+      </if>
+      <if test="proName != null" >
+        pro_name,
+      </if>
+      <if test="proPrice != null" >
+        pro_price,
+      </if>
+      <if test="proCount != null" >
+        pro_count,
+      </if>
+      <if test="isdelete != null" >
+        isdelete,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="lastModifiedTime != null" >
+        last_modified_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mapOrderProductId != null" >
+        #{mapOrderProductId,jdbcType=INTEGER},
+      </if>
+      <if test="ordId != null" >
+        #{ordId,jdbcType=INTEGER},
+      </if>
+      <if test="proId != null" >
+        #{proId,jdbcType=INTEGER},
+      </if>
+      <if test="proClassifyId != null" >
+        #{proClassifyId,jdbcType=INTEGER},
+      </if>
+      <if test="proName != null" >
+        #{proName,jdbcType=VARCHAR},
+      </if>
+      <if test="proPrice != null" >
+        #{proPrice,jdbcType=INTEGER},
+      </if>
+      <if test="proCount != null" >
+        #{proCount,jdbcType=INTEGER},
+      </if>
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="po.MapOrderProduct" >
+    update map_order_product
+    <set >
+      <if test="ordId != null" >
+        ord_id = #{ordId,jdbcType=INTEGER},
+      </if>
+      <if test="proId != null" >
+        pro_id = #{proId,jdbcType=INTEGER},
+      </if>
+      <if test="proClassifyId != null" >
+        pro_classify_id = #{proClassifyId,jdbcType=INTEGER},
+      </if>
+      <if test="proName != null" >
+        pro_name = #{proName,jdbcType=VARCHAR},
+      </if>
+      <if test="proPrice != null" >
+        pro_price = #{proPrice,jdbcType=INTEGER},
+      </if>
+      <if test="proCount != null" >
+        pro_count = #{proCount,jdbcType=INTEGER},
+      </if>
+      <if test="isdelete != null" >
+        isdelete = #{isdelete,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        last_modified_time = #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where map_order_product_id = #{mapOrderProductId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="po.MapOrderProduct" >
+    update map_order_product
+    set ord_id = #{ordId,jdbcType=INTEGER},
+      pro_id = #{proId,jdbcType=INTEGER},
+      pro_classify_id = #{proClassifyId,jdbcType=INTEGER},
+      pro_name = #{proName,jdbcType=VARCHAR},
+      pro_price = #{proPrice,jdbcType=INTEGER},
+      pro_count = #{proCount,jdbcType=INTEGER},
+      isdelete = #{isdelete,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      last_modified_time = #{lastModifiedTime,jdbcType=TIMESTAMP}
+    where map_order_product_id = #{mapOrderProductId,jdbcType=INTEGER}
+  </update> -->
+</mapper>

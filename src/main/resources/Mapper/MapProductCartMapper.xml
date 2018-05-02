@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.MapProductCartMapper" >
+  <resultMap id="BaseResultMap" type="po.MapProductCart" >
+    <id column="map_product_cart_id" property="mapProductCartId" jdbcType="INTEGER" />
+    <result column="pro_id" property="proId" jdbcType="INTEGER" />
+    <result column="cart_id" property="cartId" jdbcType="INTEGER" />
+    <result column="pro_size" property="proSize" jdbcType="INTEGER" />
+    <result column="pro_color" property="proColor" jdbcType="INTEGER" />
+    <result column="pro_count" property="proCount" jdbcType="INTEGER" />
+    <result column="isdelete" property="isdelete" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    map_product_cart_id, pro_id, cart_id, pro_size, pro_color, pro_count, isdelete, create_time, 
+    last_modified_time
+  </sql>
+  <!-- <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="po.MapProductCartKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from map_product_cart
+    where map_product_cart_id = #{mapProductCartId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="po.MapProductCartKey" >
+    delete from map_product_cart
+    where map_product_cart_id = #{mapProductCartId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="po.MapProductCart" >
+    insert into map_product_cart (map_product_cart_id, pro_id, cart_id, 
+      pro_size, pro_color, pro_count, 
+      isdelete, create_time, last_modified_time
+      )
+    values (#{mapProductCartId,jdbcType=INTEGER}, #{proId,jdbcType=INTEGER}, #{cartId,jdbcType=INTEGER}, 
+      #{proSize,jdbcType=INTEGER}, #{proColor,jdbcType=INTEGER}, #{proCount,jdbcType=INTEGER}, 
+      #{isdelete,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{lastModifiedTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="po.MapProductCart" >
+    insert into map_product_cart
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mapProductCartId != null" >
+        map_product_cart_id,
+      </if>
+      <if test="proId != null" >
+        pro_id,
+      </if>
+      <if test="cartId != null" >
+        cart_id,
+      </if>
+      <if test="proSize != null" >
+        pro_size,
+      </if>
+      <if test="proColor != null" >
+        pro_color,
+      </if>
+      <if test="proCount != null" >
+        pro_count,
+      </if>
+      <if test="isdelete != null" >
+        isdelete,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="lastModifiedTime != null" >
+        last_modified_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mapProductCartId != null" >
+        #{mapProductCartId,jdbcType=INTEGER},
+      </if>
+      <if test="proId != null" >
+        #{proId,jdbcType=INTEGER},
+      </if>
+      <if test="cartId != null" >
+        #{cartId,jdbcType=INTEGER},
+      </if>
+      <if test="proSize != null" >
+        #{proSize,jdbcType=INTEGER},
+      </if>
+      <if test="proColor != null" >
+        #{proColor,jdbcType=INTEGER},
+      </if>
+      <if test="proCount != null" >
+        #{proCount,jdbcType=INTEGER},
+      </if>
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="po.MapProductCart" >
+    update map_product_cart
+    <set >
+      <if test="proId != null" >
+        pro_id = #{proId,jdbcType=INTEGER},
+      </if>
+      <if test="cartId != null" >
+        cart_id = #{cartId,jdbcType=INTEGER},
+      </if>
+      <if test="proSize != null" >
+        pro_size = #{proSize,jdbcType=INTEGER},
+      </if>
+      <if test="proColor != null" >
+        pro_color = #{proColor,jdbcType=INTEGER},
+      </if>
+      <if test="proCount != null" >
+        pro_count = #{proCount,jdbcType=INTEGER},
+      </if>
+      <if test="isdelete != null" >
+        isdelete = #{isdelete,jdbcType=BIT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        last_modified_time = #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where map_product_cart_id = #{mapProductCartId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="po.MapProductCart" >
+    update map_product_cart
+    set pro_id = #{proId,jdbcType=INTEGER},
+      cart_id = #{cartId,jdbcType=INTEGER},
+      pro_size = #{proSize,jdbcType=INTEGER},
+      pro_color = #{proColor,jdbcType=INTEGER},
+      pro_count = #{proCount,jdbcType=INTEGER},
+      isdelete = #{isdelete,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      last_modified_time = #{lastModifiedTime,jdbcType=TIMESTAMP}
+    where map_product_cart_id = #{mapProductCartId,jdbcType=INTEGER}
+  </update> -->
+</mapper>

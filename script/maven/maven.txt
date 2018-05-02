@@ -1,0 +1,3 @@
+
+//阿里云短信 将libs下的jar安装到本地的maven仓库
+mvn install:install-file -Dfile=D:/aliyun-java-sdk-dysmsapi-1.0.0.jar -DgroupId=com.aliyun.java.sdk -DartifactId=dysmsapi -Dversion=1.0.0 -Dpackaging=jar

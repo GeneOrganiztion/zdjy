@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.AdminMapper" >
+  <resultMap id="BaseResultMap" type="po.Admin" >
+    <id column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="realname" property="realname" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="isdelete" property="isdelete" jdbcType="BIT" />
+    <result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="admin_pid" property="adminPid" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <resultMap type="AdminSetRoleDTO" id="AdminSetRoleMap">
+      <result column="role_id" property="roleId" />
+      <result column="role_display_name" property="roleDisplayName" />
+      <result column="id" property="id" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    admin_id, username, password, realname, email, phone, isdelete, last_modified_time, create_time as create_time, 
+    admin_pid
+  </sql>
+  <select id="selectAdminByParams" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  	select 
+    <include refid="Base_Column_List" />
+	    from admin
+	    where isdelete = 0
+	  <if test="adminId != null">
+        and admin_id = #{adminId}
+      </if>
+      <if test="userName != null">
+        and username LIKE CONCAT('%',#{userName},'%') 
+      </if>
+      <if test="passWord != null">
+        AND password = #{passWord}
+      </if>
+      <if test="realname != null"> 
+        and realname  LIKE  CONCAT('%',#{realName},'%') 
+      </if>
+      <if test="beginTime != null ">
+          AND CREATE_TIME > #{beginTime} 
+      </if>
+      <if test="endTime != null ">
+          <![CDATA[AND CREATE_TIME <  #{endTime} ]]>
+      </if>
+      <if test="sidx != null">
+        order by ${sidx} ${sord}
+      </if>
+  </select>
+  <update id="deleteAdminByIds" parameterType="java.util.List">
+      <![CDATA[
+        UPDATE admin SET isdelete = 1 WHERE admin_id IN
+     ]]>
+     <foreach item="item" index="index" collection="list" open="(" separator="," close=")">  
+       #{item}  
+     </foreach>  
+  </update>
+  <select id="adminSetRole" parameterType="java.lang.Integer" resultMap="AdminSetRoleMap">
+        SELECT 
+		  T1.ROLE_ID AS ROLE_ID,
+		  T1.DISPLAY_NAME AS ROLE_DISPLAY_NAME,
+		  IFNULL(T2.ROLE_ID, 0) AS ID 
+		FROM
+		  ROLE T1 
+		  LEFT JOIN MAP_ADMIN_ROLE T2 
+		    ON T1.ROLE_ID = T2.ROLE_ID 
+		    AND T2.ADMIN_ID = #{id}
+		WHERE T1.ISDELETE = 0 
+    </select>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.AssessMapper">
+  <resultMap id="BaseResultMap" type="po.Assess">
+    <id column="assess_id" property="assessId" jdbcType="INTEGER"/>
+    <result column="pro_id" property="proId" jdbcType="INTEGER"/>
+    <result column="user_id" property="userId" jdbcType="INTEGER"/>
+    <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+    <result column="assess_content" property="assessContent" jdbcType="VARCHAR"/>
+    <result column="isdelete" property="isdelete" jdbcType="BIT"/>
+    <result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP"/>
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <resultMap type="po.Assess" id="AssessAndImagesResultMap" extends="BaseResultMap">
+    <association property="product" javaType="po.Product">
+      <id column="pro_id" property="proId"></id>
+      <result column="pro_name" property="proName"></result>
+      <result column="pro_sum" property="proSum"></result>
+      <result column="pro_head" property="proHead"></result>
+      <result column="product_price" property="productPrice"></result>
+      <result column="pro_rateprice" property="proRateprice"></result>
+      <result column="pro_remark" property="proRemark"></result>
+      <result column="pro_online" property="proOnline"></result>
+      <result column="isdelete" property="isdelete"></result>
+    </association>
+    <collection property="imageList" ofType="po.Image">
+      <id column="image_id" property="imageId"></id>
+      <result column="assess_id" property="assessId"></result>
+      <result column="url" property="url"></result>
+    </collection>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    assess_id, pro_id, user_id, user_name, assess_content
+  </sql>
+
+  <select id="selectAssessByParams" resultMap="AssessAndImagesResultMap" parameterType="java.util.HashMap">
+    select
+    ass.*,
+    img.*,
+    pt.*
+    from
+    assess ass
+    left join image img
+    on ass.assess_id = img.assess_id
+    left join product pt
+    on ass.pro_id = pt.pro_id
+    where ass.isdelete = 0 and pt.isdelete = 0
+    <if test="assessId != null">
+      and ass.assess_id = #{assessId}
+    </if>
+    <if test="proId != null">
+      and ass.pro_id = #{proId}
+    </if>
+    <if test="proName != null">
+      and pt.pro_name LIKE CONCAT('%',#{proName},'%')
+    </if>
+    <if test="userId != null">
+      AND ass.user_id = #{userId}
+    </if>
+    order by ass.create_time desc
+
+
+  </select>
+
+  <insert id="saveAssessReturnId" useGeneratedKeys="true" keyProperty="assessId"
+    parameterType="po.Assess">
+		insert into assess(pro_id,user_id,user_name,assess_content,isdelete,last_modified_time,create_time)
+		values(#{proId},#{userId},#{userName},#{assessContent},#{isdelete},#{lastModifiedTime},#{createTime})
+	</insert>
+
+</mapper>

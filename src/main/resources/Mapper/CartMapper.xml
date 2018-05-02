@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.CartMapper">
+	<resultMap id="BaseResultMap" type="po.Cart">
+		<id column="cart_id" property="cartId" jdbcType="INTEGER" />
+		<result column="user_id" property="userId" jdbcType="INTEGER" />
+		<result column="cart_pro_count" property="cartProCount" jdbcType="INTEGER" />
+		<result column="isdelete" property="isdelete" jdbcType="BIT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		cart_id, user_id, cart_pro_count, isdelete, create_time,last_modified_time
+	</sql>
+
+	<resultMap type="po.Cart" id="CartAndProductresultMap" extends="BaseResultMap">
+		<collection property="listOrderProduct" ofType="po.MapProductCart">
+			<id column="map_product_cart_id" property="mapProductCartId"></id>
+			<result column="pro_id" property="proId"></result>
+			<result column="cart_id" property="cartId"></result>
+			<result column="pro_count" property="proCount"></result>
+			<association property="product" javaType="po.Product">
+				<id column="pro_id" property="proId"></id>
+				<result column="pro_name" property="proName"></result>
+				<result column="pro_sum" property="proSum"></result>
+				<result column="pro_head" property="proHead"></result>
+				<result column="product_price" property="productPrice"></result>
+				<result column="pro_rateprice" property="proRateprice"></result>
+				<result column="pro_remark" property="proRemark"></result>
+				<result column="pro_online" property="proOnline"></result>
+				<result column="isdelete" property="isdelete"></result>
+				<collection property="imagelist" ofType="po.Image">
+					<id column="image_id" property="imageId"></id>
+					<result column="pro_id" property="proId"></result>
+					<result column="assess_id" property="assessId"></result>
+					<result column="url" property="url"></result>
+				</collection>
+			</association>
+		</collection>
+	</resultMap>
+
+	<select id="selectByUser" resultMap="CartAndProductresultMap">
+		SELECT 
+		  cart.*,
+		  map_product_cart.*,
+		  product.*,
+		  image.* 
+		FROM
+		  cart,
+		  map_product_cart,
+		  product,
+		  image 
+		WHERE cart.user_id = #{userId,jdbcType=INTEGER} AND
+		  map_product_cart.cart_id = cart.cart_id 
+		  AND map_product_cart.pro_id = product.pro_id 
+		  AND image.pro_id = product.pro_id 
+		  AND map_product_cart.isdelete = 0 
+		  AND cart.isdelete = 0 
+		  AND product.isdelete = 0 
+	</select>
+</mapper>

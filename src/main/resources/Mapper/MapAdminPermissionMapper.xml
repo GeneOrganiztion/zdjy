@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.MapAdminPermissionMapper" >
+  <resultMap id="BaseResultMap" type="po.MapAdminPermission" >
+    <id column="map_admin_perm_id" property="mapAdminPermId" jdbcType="INTEGER" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="permission_id" property="permissionId" jdbcType="INTEGER" />
+    <result column="isdelete" property="isdelete" jdbcType="TINYINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <resultMap type="po.MapAdminPermission" id="adminPermissionResultMap" extends="BaseResultMap">
+  	<association property="admin" javaType="po.Admin">
+  		<id column="admin_id" property="adminId" jdbcType="INTEGER" />
+	    <result column="username" property="username" jdbcType="VARCHAR" />
+	    <result column="password" property="password" jdbcType="VARCHAR" />
+	    <result column="realname" property="realname" jdbcType="VARCHAR" />
+	    <result column="email" property="email" jdbcType="VARCHAR" />
+	    <result column="phone" property="phone" jdbcType="VARCHAR" />
+	</association>
+	<association property="permission" javaType="po.Permission">
+		<id column="permission_id" property="permissionId" jdbcType="INTEGER" />
+	    <result column="perm_name" property="permName" jdbcType="VARCHAR" />
+	    <result column="perm_des" property="permDes" jdbcType="VARCHAR" />
+	    <result column="url" property="url" jdbcType="VARCHAR" />
+	</association>
+  </resultMap>
+  
+  <resultMap id="mapAdminPermissionMapDTO" type="dto.MapAdminPermissionDTO" >
+  <result column="map_admin_perm_id" property="mapAdminPermId" jdbcType="INTEGER" />
+    <result column="admin_id" property="adminId" jdbcType="INTEGER" />
+    <result column="permission_id" property="permissionId" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="perm_name" property="permName" jdbcType="VARCHAR" />
+    <result column="perm_des" property="permDes" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    map_admin_perm_id, admin_id, permission_id, isdelete, create_time, last_modified_time
+  </sql>
+  
+   <select id="selectAdminPermissionByParams" resultMap="mapAdminPermissionMapDTO" parameterType="java.util.HashMap">
+  	SELECT 
+	  ad.admin_id as admin_id,
+	  pr.permission_id as permission_id,
+	  ad.username as username,
+	  pr.perm_name as perm_name,
+	  pr.perm_des as perm_des,
+	  pr.url as url,
+	  map.map_admin_perm_id
+	FROM
+	  admin ad,
+	  permission pr,
+	  map_admin_permission map 
+	WHERE map.`admin_id` = ad.`admin_id` 
+	  AND map.`permission_id` = pr.`permission_id` 
+	  AND map.isdelete = 0
+	  AND ad.isdelete = 0
+	  AND pr.isdelete = 0
+	  <if test="username != null" >
+        and ad.username LIKE CONCAT('%',#{username},'%') 
+      </if>
+      <if test="permName != null" >
+        and pr.perm_name LIKE CONCAT('%',#{permName},'%') 
+      </if>
+      <if test="beginTime != null ">
+          AND map.CREATE_TIME > #{beginTime} 
+      </if>
+      <if test="endTime != null ">
+          <![CDATA[AND map.CREATE_TIME <  #{endTime} ]]>
+      </if>
+      <!-- <if test="sidx != null">
+        order by ${sidx} ${sord}
+      </if> -->
+  </select>
+  
+  <select id="viewAdminPermission" resultMap="adminPermissionResultMap" parameterType="java.lang.Integer">
+  	SELECT 
+	  * 
+	FROM
+	  map_admin_permission map,
+	  admin an,
+	  permission ps 
+	WHERE map.`admin_id` = an.`admin_id` 
+	  AND map.`permission_id` = ps.`permission_id` 
+	  AND map.isdelete = 0
+	  AND an.isdelete = 0
+	  and map.admin_id = #{adminId}
+  </select>
+  <!-- <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="po.MapAdminPermissionKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from map_admin_permission
+    where map_admin_perm_id = #{mapAdminPermId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="po.MapAdminPermissionKey" >
+    delete from map_admin_permission
+    where map_admin_perm_id = #{mapAdminPermId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="po.MapAdminPermission" >
+    insert into map_admin_permission (map_admin_perm_id, admin_id, permission_id, 
+      isdelete, create_time, last_modified_time
+      )
+    values (#{mapAdminPermId,jdbcType=INTEGER}, #{adminId,jdbcType=INTEGER}, #{permissionId,jdbcType=INTEGER}, 
+      #{isdelete,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{lastModifiedTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="po.MapAdminPermission" >
+    insert into map_admin_permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="mapAdminPermId != null" >
+        map_admin_perm_id,
+      </if>
+      <if test="adminId != null" >
+        admin_id,
+      </if>
+      <if test="permissionId != null" >
+        permission_id,
+      </if>
+      <if test="isdelete != null" >
+        isdelete,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="lastModifiedTime != null" >
+        last_modified_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="mapAdminPermId != null" >
+        #{mapAdminPermId,jdbcType=INTEGER},
+      </if>
+      <if test="adminId != null" >
+        #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="permissionId != null" >
+        #{permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="po.MapAdminPermission" >
+    update map_admin_permission
+    <set >
+      <if test="adminId != null" >
+        admin_id = #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="permissionId != null" >
+        permission_id = #{permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="isdelete != null" >
+        isdelete = #{isdelete,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastModifiedTime != null" >
+        last_modified_time = #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where map_admin_perm_id = #{mapAdminPermId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="po.MapAdminPermission" >
+    update map_admin_permission
+    set admin_id = #{adminId,jdbcType=INTEGER},
+      permission_id = #{permissionId,jdbcType=INTEGER},
+      isdelete = #{isdelete,jdbcType=TINYINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      last_modified_time = #{lastModifiedTime,jdbcType=TIMESTAMP}
+    where map_admin_perm_id = #{mapAdminPermId,jdbcType=INTEGER}
+  </update> -->
+</mapper>

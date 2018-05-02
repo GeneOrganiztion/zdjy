@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="po.Permission" >
+    <id column="permission_id" property="permissionId" jdbcType="INTEGER" />
+    <result column="perm_name" property="permName" jdbcType="VARCHAR" />
+    <result column="perm_des" property="permDes" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="isdelete" property="isdelete" jdbcType="BIT" />
+    <result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    permission_id, perm_name, perm_des, url, isdelete, last_modified_time, create_time
+  </sql>
+  
+   <select id="selectPermissionByParams" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  	select 
+    <include refid="Base_Column_List" />
+	    from permission
+	    where isdelete = 0
+	  <if test="permissionId != null">
+        and permission_id = #{permissionId}
+      </if>
+      <if test="permName != null">
+        and perm_name LIKE CONCAT('%',#{permName},'%') 
+      </if>
+      <if test="url != null">
+        AND url = #{url}
+      </if>
+      <if test="beginTime != null ">
+          AND CREATE_TIME > #{beginTime} 
+      </if>
+      <if test="endTime != null ">
+          <![CDATA[AND CREATE_TIME <  #{endTime} ]]>
+      </if>
+      <if test="sidx != null">
+        order by ${sidx} ${sord}
+      </if>
+  </select>
+  
+  <!-- <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="po.PermissionKey" >
+    select 
+    <include refid="Base_Column_List" />
+    from permission
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="po.PermissionKey" >
+    delete from permission
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="po.Permission" >
+    insert into permission (permission_id, admin_id, role_id, 
+      url, isdelete, last_modified_time, 
+      create_time)
+    values (#{permissionId,jdbcType=INTEGER}, #{adminId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
+      #{url,jdbcType=VARCHAR}, #{isdelete,jdbcType=BIT}, #{lastModifiedTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="po.Permission" >
+    insert into permission
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="permissionId != null" >
+        permission_id,
+      </if>
+      <if test="adminId != null" >
+        admin_id,
+      </if>
+      <if test="roleId != null" >
+        role_id,
+      </if>
+      <if test="url != null" >
+        url,
+      </if>
+      <if test="isdelete != null" >
+        isdelete,
+      </if>
+      <if test="lastModifiedTime != null" >
+        last_modified_time,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="permissionId != null" >
+        #{permissionId,jdbcType=INTEGER},
+      </if>
+      <if test="adminId != null" >
+        #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="isdelete != null" >
+        #{isdelete,jdbcType=BIT},
+      </if>
+      <if test="lastModifiedTime != null" >
+        #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="po.Permission" >
+    update permission
+    <set >
+      <if test="adminId != null" >
+        admin_id = #{adminId,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null" >
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="url != null" >
+        url = #{url,jdbcType=VARCHAR},
+      </if>
+      <if test="isdelete != null" >
+        isdelete = #{isdelete,jdbcType=BIT},
+      </if>
+      <if test="lastModifiedTime != null" >
+        last_modified_time = #{lastModifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="po.Permission" >
+    update permission
+    set admin_id = #{adminId,jdbcType=INTEGER},
+      role_id = #{roleId,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR},
+      isdelete = #{isdelete,jdbcType=BIT},
+      last_modified_time = #{lastModifiedTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where permission_id = #{permissionId,jdbcType=INTEGER}
+  </update> -->
+</mapper>

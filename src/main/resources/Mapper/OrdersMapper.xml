@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.OrdersMapper" >
+	<resultMap id="BaseResultMap" type="po.Orders" >
+		<id column="order_id" property="orderId" jdbcType="INTEGER" />
+		<result column="ord_num" property="ordNum" jdbcType="VARCHAR" />
+		<result column="ord_state" property="ordState" jdbcType="INTEGER" />
+		<result column="ord_price" property="ordPrice" jdbcType="INTEGER" />
+		<result column="ord_pay" property="ordPay" jdbcType="VARCHAR" />
+		<result column="ord_user" property="ordUser" jdbcType="INTEGER" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="user_phone" property="userPhone" jdbcType="VARCHAR" />
+		<result column="user_address" property="userAddress" jdbcType="VARCHAR" />
+		<result column="user_postal" property="userPostal" jdbcType="VARCHAR" />
+		<result column="user_courier_num" property="userCourierNum" jdbcType="VARCHAR" />
+		<result column="user_courier_name" property="userCourierName" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+		<result column="prepay_id" property="prepayId" jdbcType="VARCHAR" />
+		<result column="timestamp" property="timestamp" jdbcType="VARCHAR" />
+		<result column="nonceStr" property="noncestr" jdbcType="VARCHAR" />
+		<result column="finalsign" property="finalsign" jdbcType="VARCHAR" />
+		<result column="isdelete" property="isdelete" jdbcType="BIT" />
+	</resultMap>
+
+	<resultMap type="po.Orders" id="OrderAndProductResultMap" extends="BaseResultMap">
+		<collection property="mapOrderProductList" ofType="po.MapOrderProduct">
+			<id column="map_order_product_id" property="mapOrderProductId" jdbcType="INTEGER" />
+			<result column="ord_id" property="ordId" jdbcType="INTEGER" />
+			<result column="pro_id" property="proId" jdbcType="INTEGER" />
+			<result column="pro_classify_id" property="proClassifyId" jdbcType="INTEGER" />
+			<result column="pro_name" property="proName" jdbcType="VARCHAR" />
+			<result column="pro_price" property="proPrice" jdbcType="INTEGER" />
+			<result column="pro_count" property="proCount" jdbcType="INTEGER" />
+			<association property="product" javaType="po.Product">
+				<id column="pro_id" property="proId" jdbcType="INTEGER" />
+				<result column="pro_name" property="proName" jdbcType="VARCHAR" />
+				<result column="pro_head" property="proHead" jdbcType="VARCHAR" />
+				<result column="product_price" property="productPrice" jdbcType="INTEGER" />
+				<result column="pro_online" property="proOnline" jdbcType="BIT" />
+				<result column="pro_remark" property="proRemark" jdbcType="VARCHAR" />
+				<result column="pro_detail" property="proDetail" jdbcType="VARCHAR" />
+				<result column="pro_area" property="proArea" jdbcType="VARCHAR" />
+				<result column="classify_id" property="classifyId" jdbcType="INTEGER" />
+				<result column="ishotsell" property="ishotsell" jdbcType="INTEGER" />
+				<collection property="imagelist" ofType="po.Image">
+					<id column="image_id" property="imageId"></id>
+					<result column="pro_id" property="proId"></result>
+					<result column="assess_id" property="assessId"></result>
+					<result column="url" property="url"></result>
+				</collection>
+			</association>
+		</collection>
+	</resultMap>
+
+
+	<sql id="Base_Column_List" >
+		order_id, ord_num, ord_state, ord_price, ord_pay, ord_user, user_name, user_phone,
+		user_address, user_postal, user_courier_num, user_courier_name, create_time, last_modified_time,
+		prepay_id, timestamp, nonceStr, finalsign, isdelete
+	</sql>
+
+	<select id="selectOrderByParams" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+		select
+		<include refid="Base_Column_List" />
+		from orders
+		where isdelete = 0
+		<if test="orderId != null">
+			and order_id = #{orderId}
+		</if>
+		<if test="ordNum != null">
+			and ord_num = #{ordNum}
+		</if>
+		<if test="userPostal != null">
+			and user_postal LIKE  CONCAT('%',#{userPostal},'%')
+		</if>
+		<if test="stateList != null">
+			and ord_state in
+			<foreach item="item" index="index" collection="stateList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<!-- <if test="userName != null">
+          and username LIKE '%${userName}%'
+        </if>
+        <if test="realname != null">
+          and realname = LIKE '%${realName}%'
+        </if> -->
+		<if test="beginTime != null ">
+			AND CREATE_TIME > #{beginTime}
+		</if>
+		<if test="endTime != null ">
+			<![CDATA[AND CREATE_TIME <  #{endTime} ]]>
+		</if>
+		<if test="sidx != null">
+			order by ${sidx} ${sord}
+		</if>
+		<if test="sidx == null">
+			order by create_time desc
+		</if>
+	</select>
+
+	<select id="selectOrderAndProByParams" resultMap="OrderAndProductResultMap" parameterType="java.util.HashMap">
+		SELECT
+		oe.*,
+		mp.*,
+		pt.*,
+		image.*
+		FROM
+		orders oe ,
+		map_order_product mp ,
+		product pt
+		left join image on image.`pro_id`=pt.`pro_id`
+		WHERE
+		oe.`order_id`= mp.`ord_id`
+		AND mp.`pro_id`= pt.`pro_id`
+		AND oe.`isdelete`=0
+		AND mp.`isdelete`=0
+		AND pt.`isdelete`=0
+		<if test="ordUser != null">
+			and oe.ord_user = #{ordUser}
+		</if>
+		<if test="stateList != null">
+			and oe.ord_state in
+			<foreach item="item" index="index" collection="stateList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="orderId != null">
+			and oe.order_id = #{orderId}
+		</if>
+		order by oe.create_time desc
+	</select>
+
+
+	<select id="countOrdersByParam" resultType="java.lang.Long" parameterType="java.util.HashMap">
+		select
+		count(1)
+		from orders
+		where isdelete = 0
+		<if test="ordUser != null">
+			and ord_user = #{ordUser}
+		</if>
+		<if test="stateList != null">
+			and ord_state in
+			<foreach item="item" index="index" collection="stateList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+
+	<update id="timeingDelWaitPayOrders" parameterType="java.util.HashMap">
+		UPDATE
+		orders os
+		SET
+		os.`isdelete` = 1
+		WHERE os.`ord_state` = 1
+		<![CDATA[AND os.`create_time` <  #{time} ]]>;
+	</update>
+
+</mapper>

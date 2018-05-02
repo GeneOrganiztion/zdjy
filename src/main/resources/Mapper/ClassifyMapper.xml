@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="Mapper.ClassifyMapper" >
+  <resultMap id="BaseResultMap" type="po.Classify" >
+    <id column="classify_id" property="classifyId" jdbcType="INTEGER" />
+    <result column="cla_name" property="claName" jdbcType="VARCHAR" />
+    <result column="cla_content" property="claContent" jdbcType="VARCHAR" />
+    <result column="isdelete" property="isdelete" jdbcType="BIT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_modified_time" property="lastModifiedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    classify_id, cla_name, cla_content, isdelete, create_time, last_modified_time
+  </sql>
+  
+  <select id="selectClassifyParams" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+  	select 
+    <include refid="Base_Column_List" />
+	    from classify
+	    where isdelete = 0
+	  <if test="classifyId != null">
+        and classify_id = #{classifyId}
+      </if>
+	  <if test="claName != null">
+        and cla_name like CONCAT('%',#{claName},'%') 
+      </if>
+      <if test="beginTime != null ">
+        AND CREATE_TIME > #{beginTime} 
+      </if>
+      <if test="endTime != null ">
+        <![CDATA[AND CREATE_TIME <  #{endTime} ]]>
+      </if>
+      <if test="sidx != null">
+        order by ${sidx} ${sord}
+      </if>
+      <if test="sidx == null">
+        order by create_time desc
+      </if>
+  </select>
+  
+  
+</mapper>
